@@ -1,3 +1,5 @@
-# Shopping-cart
+# Shopping-cart using vanilla Javascript
 
-Hi there
+## Features implemented
+
+1. Added a navbar
