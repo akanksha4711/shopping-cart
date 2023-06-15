@@ -2,35 +2,35 @@ let shop = document.getElementById('shop');
 
 // ? Data for each shop item
 let shopItemsData = [{
-  id: "1",
+  id: "dsfdsfwe",
   name: "Casual Shirt",
   price: 45,
   desc: "Lorem ipsum dolor sit, amet consectetur adipisicing elit",
   img: "images/img-1.jpg"
 },
 {
-  id: "2",
+  id: "kfjrwnjadsnj",
   name: "Office Shirt",
   price: 100,
   desc: "Lorem ipsum dolor sit, amet consectetur adipisicing elit",
   img: "images/img-2.jpg"
 },
 {
-  id: "3",
+  id: "nkfrjwefb",
   name: "T Shirt",
   price: 25,
   desc: "Lorem ipsum dolor sit, amet consectetur adipisicing elit",
   img: "images/img-3.jpg"
 },
 {
-  id: "4",
+  id: "lscma",
   name: "Mens Suit",
   price: 300,
   desc: "Lorem ipsum dolor sit, amet consectetur adipisicing elit",
   img: "images/img-4.jpg"
 },
 {
-  id: "5",
+  id: "ruhsmnwlp",
   name: "Blue Tie",
   price: 20,
   desc: "Lorem ipsum dolor sit, amet consectetur adipisicing elit",
@@ -43,7 +43,7 @@ let shopItemsData = [{
 // ?    id_of_item: id
 // ?    qty_of_item : qty
 // ? }
-let basket = [];
+let basket = JSON.parse(localStorage.getItem("data")) || [];
 
 // ? This function fills the shop element with items
 // ? We map the stored data of each item to div.item
@@ -52,6 +52,7 @@ let basket = [];
 let generateShop = () => {
   return (shop.innerHTML = shopItemsData.map((x) => {
     let { id, name, price, desc, img } = x;
+    let search = basket.find((a) => a.id == id) || [];
     return `
         <div id=product-id-${id} class="item">
           <img width="220" src="${img}" alt="">
@@ -62,7 +63,9 @@ let generateShop = () => {
               <h2>$ ${price}</h2>
               <div class="buttons">
                 <i onclick="decrement(${id})" class="bi bi-dash-lg"></i>
-                <div id=${id} class="quantity">0</div>
+                <div id=${id} class="quantity">
+                ${search.item === undefined ? 0 : search.item}
+                </div>
                 <i onclick="increment(${id})" class="bi bi-plus-lg"></i>
               </div>
             </div>
@@ -74,45 +77,49 @@ let generateShop = () => {
 generateShop();
 
 // ? Implementing the + and - functionality for an item
-let increment = (id) => {
+let increment = (selectedItem) => {
 
-  let search = basket.find((x) => x.id === id);
+  let search = basket.find((x) => x.id === selectedItem.id);
 
   if (search === undefined) {
-    search = {
-      id: id,
+    basket.push({
+      id: selectedItem.id,
       item: 1
-    };
-    basket.push(search);
+    });
   }
   else {
     search.item += 1;
   }
-  update(search);
+  localStorage.setItem("data", JSON.stringify(basket));
+  update(selectedItem.id);
 }
 
-let decrement = (id) => {
+let decrement = (selectedItem) => {
 
-  let search = basket.find((x) => x.id === id);
+  let search = basket.find((x) => x.id == selectedItem.id);
 
   if (search === undefined) return;
   else if (search.item === 1) {
     let index = basket.indexOf(search);
     basket.splice(index, 1);
-    search.item = 0;
   }
   else {
     search.item -= 1;
   }
-  update(search);
+  localStorage.setItem("data", JSON.stringify(basket));
+  update(selectedItem.id);
 }
 
 // ? Both increment and decrement function call update()
 // ? it updates the quantity being displayed on screen,
 // ? and calls calculation() which calculates total no.
 // ? of items in the basket and updates navbar cart-icon
-let update = (basketElem) => {
-  document.getElementById(basketElem.id).innerHTML = basketElem.item;
+let update = (id) => {
+  let search = basket.find((x) => x.id == id);
+  if (search === undefined)
+    document.getElementById(id).innerHTML = 0;
+  else
+    document.getElementById(id).innerHTML = search.item;
   console.log("basket updated");
   calculation();
 }
@@ -120,3 +127,6 @@ let calculation = () => {
   let cartIcon = document.getElementById("cartAmount");
   cartIcon.innerHTML = basket.map((x) => x.item).reduce((x, y) => x + y, 0);
 }
+// ? Calling the calculate function every time the page reloads
+// ? so that the number on top of cart icon is always up-to-date
+calculation();
