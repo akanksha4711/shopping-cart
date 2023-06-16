@@ -6,8 +6,8 @@
 2. Added product cards - using javascript
 3. Added +/- functionality to add items in basket
 4. Added basket data to Local storage (prevents basket from resetting after every refresh)
-5. Added the Cart Page
-6.
+5. Created the Cart Page
+6. Added functionality to the Cart page - total price, remove item, clear cart
 
 ## Notes
 
